@@ -280,5 +280,11 @@ class _LoginState extends State<Login> {
     //* Once signed in, return the UserCredential
     await FirebaseAuth.instance.signInWithCredential(credential);
     Navigator.of(context).pushReplacementNamed("home");
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Welcome Back'),
+        backgroundColor: Colors.green,
+      ),
+    );
   }
 }
