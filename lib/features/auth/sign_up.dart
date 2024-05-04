@@ -110,6 +110,7 @@ class _SignUpState extends State<SignUp> {
                     );
                     await FirebaseAuth.instance.currentUser!
                         .sendEmailVerification();
+                    await FirebaseAuth.instance.signOut();
                   } on FirebaseAuthException catch (e) {
                     _signUpHandleException(e, context);
                   } catch (e) {

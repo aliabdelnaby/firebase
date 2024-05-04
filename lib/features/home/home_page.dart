@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,6 +22,8 @@ class _HomePageState extends State<HomePage> {
             child: IconButton(
               icon: const Icon(Icons.logout),
               onPressed: () async {
+                GoogleSignIn googleSignIn = GoogleSignIn();
+                googleSignIn.disconnect();
                 Navigator.of(context).pushReplacementNamed("login");
                 await FirebaseAuth.instance.signOut();
               },

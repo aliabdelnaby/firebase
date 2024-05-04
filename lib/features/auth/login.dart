@@ -6,6 +6,7 @@ import 'package:firebase_app/core/components/custom_text_form_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -161,13 +162,15 @@ class _LoginState extends State<Login> {
             ),
             Container(height: 20),
             MaterialButton(
+              onPressed: () async {
+                await signInWithGoogle();
+              },
               height: 40,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
               color: Colors.red[700],
               textColor: Colors.white,
-              onPressed: () {},
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -233,5 +236,30 @@ class _LoginState extends State<Login> {
         ),
       );
     }
+  }
+
+  Future<void> signInWithGoogle() async {
+    //* Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    //* Check if user is signed in
+    if (googleUser == null) {
+      return;
+    }
+
+    //* Obtain the auth details from the request
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+
+    //* Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    //* Once signed in, return the UserCredential
+    await FirebaseAuth.instance.signInWithCredential(credential);
+    Navigator.of(context).pushReplacementNamed("home");
+    
   }
 }
