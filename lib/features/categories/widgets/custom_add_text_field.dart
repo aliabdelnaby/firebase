@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class AddCategortyTextFormField extends StatelessWidget {
+class CategortyTextFormField extends StatelessWidget {
   final String hinttext;
   final TextEditingController mycontroller;
 
-  const AddCategortyTextFormField({
+  const CategortyTextFormField({
     super.key,
     required this.hinttext,
     required this.mycontroller,
