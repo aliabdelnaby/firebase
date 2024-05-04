@@ -15,6 +15,11 @@ class _AddCategoryViewState extends State<AddCategoryView> {
   TextEditingController name = TextEditingController();
   GlobalKey<FormState> addCategoryformKey = GlobalKey<FormState>();
   bool isLoading = false;
+  @override
+  void dispose() {
+    name.dispose();
+    super.dispose();
+  }
 
   CollectionReference categories =
       FirebaseFirestore.instance.collection('categories');

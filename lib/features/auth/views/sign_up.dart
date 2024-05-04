@@ -18,6 +18,13 @@ class _SignUpState extends State<SignUp> {
   TextEditingController password = TextEditingController();
   GlobalKey<FormState> signUpFormkey = GlobalKey<FormState>();
   bool isLoading = false;
+  @override
+  void dispose() {
+    username.dispose();
+    email.dispose();
+    password.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +108,7 @@ class _SignUpState extends State<SignUp> {
                     title: "Sign Up",
                     onPressed: () async {
                       if (signUpFormkey.currentState!.validate()) {
-                         setState(() {
+                        setState(() {
                           isLoading = true;
                         });
                         await signUpMethod(context);

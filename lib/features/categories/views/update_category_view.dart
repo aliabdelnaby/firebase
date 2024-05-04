@@ -20,14 +20,24 @@ class _AddCategoryViewState extends State<UpdateCategoryView> {
   TextEditingController name = TextEditingController();
   GlobalKey<FormState> updateCategoryformKey = GlobalKey<FormState>();
   bool isLoading = false;
+  @override
+  void dispose() {
+    name.dispose();
+    super.dispose();
+  }
 
   CollectionReference categories =
       FirebaseFirestore.instance.collection('categories');
 
   Future<void> updateCategory() {
-    return categories.doc(widget.docId).update({
-      'name': name.text,
-    }).then(
+    return categories.doc(widget.docId).set(
+      {
+        'name': name.text,
+      },
+      SetOptions(
+        merge: true,
+      ),
+    ).then(
       (value) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

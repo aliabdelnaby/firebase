@@ -20,6 +20,12 @@ class _LoginState extends State<Login> {
   TextEditingController password = TextEditingController();
   GlobalKey<FormState> loginFormkey = GlobalKey<FormState>();
   bool isLoading = false;
+  @override
+  void dispose() {
+    email.dispose();
+    password.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

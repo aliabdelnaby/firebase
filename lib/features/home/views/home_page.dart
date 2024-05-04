@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app/features/categories/views/update_category_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -95,13 +93,16 @@ class _HomePageState extends State<HomePage> {
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () {
-                    Navigator.of(context)
-                        .push(MaterialPageRoute(builder: (context) {
-                      return UpdateCategoryView(
-                        docId: data[index].id,
-                        oldName: data[index]["name"],
-                      );
-                    }));
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return UpdateCategoryView(
+                            docId: data[index].id,
+                            oldName: data[index]["name"],
+                          );
+                        },
+                      ),
+                    );
                   },
                   child: Card(
                     child: Container(
@@ -121,14 +122,14 @@ class _HomePageState extends State<HomePage> {
                               ),
                               IconButton(
                                 onPressed: () async {
-                                  await FirebaseFirestore.instance
-                                      .collection("categories")
-                                      .doc(data[index].id)
-                                      .delete();
                                   Navigator.of(context).pushNamedAndRemoveUntil(
                                     "home",
                                     (route) => false,
                                   );
+                                  await FirebaseFirestore.instance
+                                      .collection("categories")
+                                      .doc(data[index].id)
+                                      .delete();
                                 },
                                 icon: const Icon(
                                   Icons.delete_outline,
