@@ -32,7 +32,7 @@ class _AddCategoryState extends State<AddCategory> {
             backgroundColor: Colors.orange,
           ),
         );
-        Navigator.pop(context);
+        Navigator.of(context).pushReplacementNamed("home");
       },
     ).catchError(
       (error) {

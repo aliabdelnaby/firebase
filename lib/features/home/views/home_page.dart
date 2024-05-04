@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -10,6 +11,21 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List data = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  void getData() async {
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('categories').get();
+    data.addAll(querySnapshot.docs);
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,43 +52,33 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: GridView(
+      body: GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          mainAxisExtent: 220,
+          mainAxisExtent: 200,
           crossAxisSpacing: 5,
           mainAxisSpacing: 5,
         ),
-        children: [
-          Card(
+        itemCount: data.length,
+        itemBuilder: (context, index) {
+          return Card(
             child: Container(
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
                   Image.network(
                     "https://assets.dryicons.com/uploads/icon/preview/1139/large_1x_folder.png",
+                    height: 120,
                   ),
                   const SizedBox(height: 5),
-                  const Text("Company"),
+                  Text(
+                    data[index]["name"],
+                  ),
                 ],
               ),
             ),
-          ),
-          Card(
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  Image.network(
-                    "https://assets.dryicons.com/uploads/icon/preview/1139/large_1x_folder.png",
-                  ),
-                  const SizedBox(height: 5),
-                  const Text("Company"),
-                ],
-              ),
-            ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
