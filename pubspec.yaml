@@ -37,6 +37,7 @@ dependencies:
   firebase_storage: ^11.7.4
   flutter:
     sdk: flutter
+  font_awesome_flutter: ^10.7.0
   google_sign_in: ^6.2.1
 
 dev_dependencies:
