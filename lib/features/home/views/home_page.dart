@@ -81,7 +81,7 @@ class _HomePageState extends State<HomePage> {
           : GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                mainAxisExtent: 200,
+                mainAxisExtent: 250,
                 crossAxisSpacing: 5,
                 mainAxisSpacing: 5,
               ),
@@ -97,8 +97,29 @@ class _HomePageState extends State<HomePage> {
                           height: 120,
                         ),
                         const SizedBox(height: 5),
-                        Text(
-                          data[index]["name"],
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              data[index]["name"],
+                            ),
+                            IconButton(
+                              onPressed: () async {
+                                await FirebaseFirestore.instance
+                                    .collection("categories")
+                                    .doc(data[index].id)
+                                    .delete();
+                                Navigator.of(context).pushNamedAndRemoveUntil(
+                                  "home",
+                                  (route) => false,
+                                );
+                              },
+                              icon: const Icon(
+                                Icons.delete_outline,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

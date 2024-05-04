@@ -28,11 +28,11 @@ class _AddCategoryState extends State<AddCategory> {
       (value) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Categorey Added'),
+            content: Text('Category Added'),
             backgroundColor: Colors.orange,
           ),
         );
-        Navigator.of(context).pushReplacementNamed("home");
+        Navigator.of(context).pushNamedAndRemoveUntil("home", (route) => false);
       },
     ).catchError(
       (error) {
