@@ -1,6 +1,7 @@
 import 'package:firebase_app/features/categories/widgets/custom_add_text_field.dart';
 import 'package:firebase_app/features/categories/widgets/custom_button_category.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddCategory extends StatefulWidget {
   const AddCategory({super.key});
@@ -13,6 +14,38 @@ class _AddCategoryState extends State<AddCategory> {
   TextEditingController name = TextEditingController();
   TextEditingController password = TextEditingController();
   GlobalKey<FormState> addCategoryformKey = GlobalKey<FormState>();
+  bool isLoading = false;
+
+  CollectionReference categories =
+      FirebaseFirestore.instance.collection('categories');
+
+  Future<void> addCategory() {
+    return categories.add(
+      {
+        'name': name.text,
+      },
+    ).then(
+      (value) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Categorey Added'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+        Navigator.pop(context);
+      },
+    ).catchError(
+      (error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error.toString()),
+            backgroundColor: Colors.red,
+          ),
+        );
+        Navigator.pop(context);
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,12 +65,24 @@ class _AddCategoryState extends State<AddCategory> {
               ),
             ),
             const SizedBox(height: 10),
-            AddCategoryButton(
-              onPressed: () {
-                if (addCategoryformKey.currentState!.validate()) {}
-              },
-              title: "Add",
-            ),
+            isLoading
+                ? const CircularProgressIndicator(
+                    color: Colors.orange,
+                  )
+                : AddCategoryButton(
+                    onPressed: () async {
+                      if (addCategoryformKey.currentState!.validate()) {
+                        setState(() {
+                          isLoading = true;
+                        });
+                        await addCategory();
+                        setState(() {
+                          isLoading = false;
+                        });
+                      }
+                    },
+                    title: "Add",
+                  ),
             const SizedBox(height: 10),
           ],
         ),
