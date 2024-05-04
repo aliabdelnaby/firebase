@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
-import 'package:firebase_app/core/components/custom_button_auth.dart';
-import 'package:firebase_app/core/components/custom_logo_auth.dart';
-import 'package:firebase_app/core/components/custom_text_form_field.dart';
+import 'package:firebase_app/features/auth/widgets/custom_button_auth.dart';
+import 'package:firebase_app/features/auth/widgets/custom_logo_auth.dart';
+import 'package:firebase_app/features/auth/widgets/custom_text_form_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
