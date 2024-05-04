@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +13,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List data = [];
+  List<QueryDocumentSnapshot> data = [];
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -23,6 +26,7 @@ class _HomePageState extends State<HomePage> {
     QuerySnapshot querySnapshot =
         await FirebaseFirestore.instance.collection('categories').get();
     data.addAll(querySnapshot.docs);
+    isLoading = false;
     setState(() {});
   }
 
@@ -36,50 +40,72 @@ class _HomePageState extends State<HomePage> {
         tooltip: "Add Category",
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         backgroundColor: Colors.orange,
-        child: const Icon(Icons.add),
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
       ),
       appBar: AppBar(
-        title: const Text('Firebase Install'),
+        title: const Text('Firebase App'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
-              GoogleSignIn googleSignIn = GoogleSignIn();
-              googleSignIn.disconnect();
-              Navigator.of(context).pushReplacementNamed("login");
-              await FirebaseAuth.instance.signOut();
+              try {
+                GoogleSignIn googleSignIn = GoogleSignIn();
+                Navigator.of(context).pushReplacementNamed("login");
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("You are logged out"),
+                  ),
+                );
+                await FirebaseAuth.instance.signOut();
+                await googleSignIn.signOut();
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Error signing out: $e"),
+                  ),
+                );
+              }
             },
           ),
         ],
       ),
-      body: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisExtent: 200,
-          crossAxisSpacing: 5,
-          mainAxisSpacing: 5,
-        ),
-        itemCount: data.length,
-        itemBuilder: (context, index) {
-          return Card(
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  Image.network(
-                    "https://assets.dryicons.com/uploads/icon/preview/1139/large_1x_folder.png",
-                    height: 120,
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    data[index]["name"],
-                  ),
-                ],
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: Colors.orange,
               ),
+            )
+          : GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisExtent: 200,
+                crossAxisSpacing: 5,
+                mainAxisSpacing: 5,
+              ),
+              itemCount: data.length,
+              itemBuilder: (context, index) {
+                return Card(
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        Image.network(
+                          "https://assets.dryicons.com/uploads/icon/preview/1139/large_1x_folder.png",
+                          height: 120,
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          data[index]["name"],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }

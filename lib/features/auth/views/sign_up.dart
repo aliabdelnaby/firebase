@@ -17,6 +17,7 @@ class _SignUpState extends State<SignUp> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   GlobalKey<FormState> signUpFormkey = GlobalKey<FormState>();
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -90,40 +91,24 @@ class _SignUpState extends State<SignUp> {
                 ],
               ),
             ),
-            CustomButtonAuth(
-              title: "SignUp",
-              onPressed: () async {
-                if (signUpFormkey.currentState!.validate()) {
-                  try {
-                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                      email: email.text,
-                      password: password.text,
-                    );
-                    Navigator.of(context).pushReplacementNamed("login");
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          "Sign Up Successfully, Check your email",
-                        ),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
-                    await FirebaseAuth.instance.currentUser!
-                        .sendEmailVerification();
-                    await FirebaseAuth.instance.signOut();
-                  } on FirebaseAuthException catch (e) {
-                    _signUpHandleException(e, context);
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(e.toString()),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                  }
-                }
-              },
-            ),
+            isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.orange,
+                    ),
+                  )
+                : CustomButtonAuth(
+                    title: "Sign Up",
+                    onPressed: () async {
+                      if (signUpFormkey.currentState!.validate()) {
+                         setState(() {
+                          isLoading = true;
+                        });
+                        await signUpMethod(context);
+                        isLoading = false;
+                      }
+                    },
+                  ),
             const SizedBox(height: 40),
             InkWell(
               onTap: () {
@@ -154,6 +139,42 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
+  //!Sign Up Method
+  Future<void> signUpMethod(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email.text,
+        password: password.text,
+      );
+      Navigator.of(context).pushReplacementNamed("login");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Sign Up Successfully, Check your email",
+          ),
+          backgroundColor: Colors.green,
+        ),
+      );
+      await verifyEmail();
+      await FirebaseAuth.instance.signOut();
+    } on FirebaseAuthException catch (e) {
+      _signUpHandleException(e, context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  //! Verify Email Method
+  Future<void> verifyEmail() async {
+    await FirebaseAuth.instance.currentUser!.sendEmailVerification();
+  }
+
+  //! SignUp Handle Exception
   void _signUpHandleException(FirebaseAuthException e, BuildContext context) {
     if (e.code == 'weak-password') {
       ScaffoldMessenger.of(context).showSnackBar(

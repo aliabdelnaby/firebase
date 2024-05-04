@@ -19,6 +19,7 @@ class _LoginState extends State<Login> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   GlobalKey<FormState> loginFormkey = GlobalKey<FormState>();
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -119,47 +120,26 @@ class _LoginState extends State<Login> {
                 ],
               ),
             ),
-            CustomButtonAuth(
-              title: "login",
-              onPressed: () async {
-                if (loginFormkey.currentState!.validate()) {
-                  try {
-                    await FirebaseAuth.instance.signInWithEmailAndPassword(
-                      email: email.text,
-                      password: password.text,
-                    );
-                    if (FirebaseAuth.instance.currentUser!.emailVerified ==
-                        true) {
-                      Navigator.of(context).pushReplacementNamed("home");
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Welcome Back'),
-                          backgroundColor: Colors.green,
-                        ),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Please verify your email"),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                    }
-                  } on FirebaseAuthException catch (e) {
-                    _signInHandleException(e, context);
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          e.toString(),
-                        ),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                  }
-                }
-              },
-            ),
+            isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.orange,
+                    ),
+                  )
+                : CustomButtonAuth(
+                    title: "login",
+                    onPressed: () async {
+                      if (loginFormkey.currentState!.validate()) {
+                        setState(() {
+                          isLoading = true;
+                        });
+                        await signInMethod(context);
+                        setState(() {
+                          isLoading = false;
+                        });
+                      }
+                    },
+                  ),
             Container(height: 20),
             MaterialButton(
               onPressed: () async {
@@ -213,6 +193,45 @@ class _LoginState extends State<Login> {
     );
   }
 
+//! SignIn Method
+  Future<void> signInMethod(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email.text,
+        password: password.text,
+      );
+
+      if (FirebaseAuth.instance.currentUser!.emailVerified == true) {
+        Navigator.of(context).pushReplacementNamed("home");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Welcome Back'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Please verify your email"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      _signInHandleException(e, context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e.toString(),
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  //! SignIn Handle Exception
   void _signInHandleException(FirebaseAuthException e, BuildContext context) {
     if (e.code == 'user-not-found') {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -238,6 +257,7 @@ class _LoginState extends State<Login> {
     }
   }
 
+  //!SignIn With Google
   Future<void> signInWithGoogle() async {
     //* Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -260,6 +280,5 @@ class _LoginState extends State<Login> {
     //* Once signed in, return the UserCredential
     await FirebaseAuth.instance.signInWithCredential(credential);
     Navigator.of(context).pushReplacementNamed("home");
-    
   }
 }
