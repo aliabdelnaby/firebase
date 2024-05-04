@@ -1,6 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_app/core/components/custom_button_auth.dart';
 import 'package:firebase_app/core/components/custom_logo_auth.dart';
 import 'package:firebase_app/core/components/custom_text_form_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -72,7 +75,35 @@ class _LoginState extends State<Login> {
                     mycontroller: password,
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () async {
+                      try {
+                        await FirebaseAuth.instance.sendPasswordResetEmail(
+                          email: email.text,
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              "Check Your Email",
+                            ),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      } on FirebaseAuthException {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Enter Valid Email"),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(e.toString()),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    },
                     child: Container(
                       margin: const EdgeInsets.only(top: 10, bottom: 20),
                       alignment: Alignment.topRight,
@@ -89,8 +120,43 @@ class _LoginState extends State<Login> {
             ),
             CustomButtonAuth(
               title: "login",
-              onPressed: () {
-                if (loginFormkey.currentState!.validate()) {}
+              onPressed: () async {
+                if (loginFormkey.currentState!.validate()) {
+                  try {
+                    await FirebaseAuth.instance.signInWithEmailAndPassword(
+                      email: email.text,
+                      password: password.text,
+                    );
+                    if (FirebaseAuth.instance.currentUser!.emailVerified ==
+                        true) {
+                      Navigator.of(context).pushReplacementNamed("home");
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Welcome Back'),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Please verify your email"),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  } on FirebaseAuthException catch (e) {
+                    _signInHandleException(e, context);
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          e.toString(),
+                        ),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
               },
             ),
             Container(height: 20),
@@ -117,7 +183,7 @@ class _LoginState extends State<Login> {
             Container(height: 20),
             InkWell(
               onTap: () {
-                Navigator.of(context).pushNamed("signup");
+                Navigator.of(context).pushReplacementNamed("signup");
               },
               child: const Center(
                 child: Text.rich(
@@ -142,5 +208,30 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
+  }
+
+  void _signInHandleException(FirebaseAuthException e, BuildContext context) {
+    if (e.code == 'user-not-found') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No user found for that email.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } else if (e.code == 'wrong-password') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Wrong password provided for that user.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Check your Email and password!'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }

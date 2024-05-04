@@ -1,6 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
 import 'package:firebase_app/core/components/custom_button_auth.dart';
 import 'package:firebase_app/core/components/custom_logo_auth.dart';
 import 'package:firebase_app/core/components/custom_text_form_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SignUp extends StatefulWidget {
@@ -84,32 +86,47 @@ class _SignUpState extends State<SignUp> {
                     hinttext: "ُEnter Your Password",
                     mycontroller: password,
                   ),
-                  GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 10, bottom: 20),
-                      alignment: Alignment.topRight,
-                      child: const Text(
-                        "Forgot Password ?",
-                        style: TextStyle(
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                  ),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
             CustomButtonAuth(
               title: "SignUp",
-              onPressed: () {
-                if (signUpFormkey.currentState!.validate()) {}
+              onPressed: () async {
+                if (signUpFormkey.currentState!.validate()) {
+                  try {
+                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                      email: email.text,
+                      password: password.text,
+                    );
+                    Navigator.of(context).pushReplacementNamed("login");
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          "Sign Up Successfully, Check your email",
+                        ),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                    await FirebaseAuth.instance.currentUser!
+                        .sendEmailVerification();
+                  } on FirebaseAuthException catch (e) {
+                    _signUpHandleException(e, context);
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(e.toString()),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
               },
             ),
             const SizedBox(height: 40),
             InkWell(
               onTap: () {
-                Navigator.of(context).pushNamed("login");
+                Navigator.of(context).pushReplacementNamed("login");
               },
               child: const Center(
                 child: Text.rich(
@@ -134,5 +151,37 @@ class _SignUpState extends State<SignUp> {
         ),
       ),
     );
+  }
+
+  void _signUpHandleException(FirebaseAuthException e, BuildContext context) {
+    if (e.code == 'weak-password') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('The password provided is too weak.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } else if (e.code == 'email-already-in-use') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("The account already exists for that email."),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } else if (e.code == 'invalid-email') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("The email is invalid."),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }
