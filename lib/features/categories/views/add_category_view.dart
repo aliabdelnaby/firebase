@@ -1,8 +1,9 @@
-import 'package:firebase_app/features/categories/widgets/custom_add_text_field.dart';
-import 'package:firebase_app/features/categories/widgets/custom_button_category.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
+import '../widgets/custom_add_text_field.dart';
+import '../widgets/custom_button_category.dart';
 
 class AddCategoryView extends StatefulWidget {
   const AddCategoryView({super.key});

@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_app/features/notes/views/add_note.dart';
-import 'package:firebase_app/features/notes/views/edit_note.dart';
 import 'package:flutter/material.dart';
+
+import 'add_note.dart';
+import 'edit_note.dart';
 
 class NoteView extends StatefulWidget {
   const NoteView({super.key, required this.categoryId});
@@ -96,49 +97,64 @@ class _HomePageState extends State<NoteView> {
                 ),
                 itemCount: data.length,
                 itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return UpdateNoteView(
-                              noteDocId: data[index].id,
-                              oldNote: data[index]["note"],
-                              categoryDocId: widget.categoryId,
-                            );
-                          },
-                        ),
-                      );
-                    },
-                    child: Card(
-                      child: Container(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 5),
-                            Text(
-                              data[index]["note"],
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 3,
-                            ),
-                            IconButton(
-                              onPressed: () async {
-                                // Navigator.of(context).pushNamedAndRemoveUntil(
-                                //   "home",
-                                //   (route) => false,
-                                // );
-                                // await FirebaseFirestore.instance
-                                //     .collection("categories")
-                                //     .doc(data[index].id)
-                                //     .delete();
-                              },
-                              icon: const Icon(
-                                Icons.delete_outline,
-                                color: Colors.red,
+                  return Card(
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 5),
+                          Text(
+                            data[index]["note"],
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 3,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                onPressed: () async {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) {
+                                        return UpdateNoteView(
+                                          noteDocId: data[index].id,
+                                          oldNote: data[index]["note"],
+                                          categoryDocId: widget.categoryId,
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(
+                                  Icons.edit_note_outlined,
+                                  color: Colors.red,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
+                              IconButton(
+                                onPressed: () async {
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                    builder: (context) {
+                                      return NoteView(
+                                        categoryId: widget.categoryId,
+                                      );
+                                    },
+                                  ), (route) => false);
+                                  await FirebaseFirestore.instance
+                                      .collection("categories")
+                                      .doc(widget.categoryId)
+                                      .collection('note')
+                                      .doc(data[index].id)
+                                      .delete();
+                                },
+                                icon: const Icon(
+                                  Icons.delete_outline,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   );

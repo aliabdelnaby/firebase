@@ -99,9 +99,8 @@ class _HomePageState extends State<HomePage> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) {
-                          return UpdateCategoryView(
-                            docId: data[index].id,
-                            oldName: data[index]["name"],
+                          return NoteView(
+                            categoryId: data[index].id,
                           );
                         },
                       ),
@@ -129,15 +128,16 @@ class _HomePageState extends State<HomePage> {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (context) {
-                                        return NoteView(
-                                          categoryId: data[index].id,
+                                        return UpdateCategoryView(
+                                          docId: data[index].id,
+                                          oldName: data[index]["name"],
                                         );
                                       },
                                     ),
                                   );
                                 },
                                 icon: const Icon(
-                                  Icons.info_outline_rounded,
+                                  Icons.edit_note_outlined,
                                   color: Colors.red,
                                 ),
                               ),

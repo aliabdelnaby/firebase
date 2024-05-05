@@ -1,6 +1,6 @@
-import 'package:firebase_app/features/categories/widgets/custom_add_text_field.dart';
-import 'package:firebase_app/features/categories/widgets/custom_button_category.dart';
-import 'package:firebase_app/features/notes/views/note_view.dart';
+import '../../categories/widgets/custom_add_text_field.dart';
+import '../../categories/widgets/custom_button_category.dart';
+import 'note_view.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
