@@ -137,7 +137,7 @@ class _HomePageState extends State<HomePage> {
                                   );
                                 },
                                 icon: const Icon(
-                                  Icons.add_comment_outlined,
+                                  Icons.info_outline_rounded,
                                   color: Colors.red,
                                 ),
                               ),
