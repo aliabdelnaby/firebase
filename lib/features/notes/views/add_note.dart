@@ -22,7 +22,7 @@ class _AddCategoryViewState extends State<AddNoteView> {
     super.dispose();
   }
 
-  Future<void> addCategory() {
+  Future<void> addNote() async {
     CollectionReference collectionNote = FirebaseFirestore.instance
         .collection('categories')
         .doc(widget.docId)
@@ -90,7 +90,7 @@ class _AddCategoryViewState extends State<AddNoteView> {
                         setState(() {
                           isLoading = true;
                         });
-                        await addCategory();
+                        await addNote();
                         setState(() {
                           isLoading = false;
                         });
