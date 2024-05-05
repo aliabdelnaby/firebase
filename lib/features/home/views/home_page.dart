@@ -1,5 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app/features/categories/views/update_category_view.dart';
+import 'package:firebase_app/features/notes/views/note_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -85,7 +88,7 @@ class _HomePageState extends State<HomePage> {
           : GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                mainAxisExtent: 250,
+                mainAxisExtent: 270,
                 crossAxisSpacing: 5,
                 mainAxisSpacing: 5,
               ),
@@ -113,12 +116,30 @@ class _HomePageState extends State<HomePage> {
                             "https://assets.dryicons.com/uploads/icon/preview/1139/large_1x_folder.png",
                             height: 120,
                           ),
-                          const SizedBox(height: 5),
+                          const SizedBox(height: 15),
+                          Text(
+                            data[index]["name"],
+                          ),
+                          const SizedBox(height: 15),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
-                                data[index]["name"],
+                              IconButton(
+                                onPressed: () async {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) {
+                                        return NoteView(
+                                          categoryId: data[index].id,
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(
+                                  Icons.add_comment_outlined,
+                                  color: Colors.red,
+                                ),
                               ),
                               IconButton(
                                 onPressed: () async {
