@@ -1,5 +1,4 @@
 import 'package:firebase_app/features/test_notification.dart';
-
 import 'core/functions/auth_check_state.dart';
 import 'features/auth/views/login.dart';
 import 'features/auth/views/sign_up.dart';

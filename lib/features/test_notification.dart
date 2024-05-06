@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_app/core/functions/send_notification_foreground.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ class TestNotification extends StatefulWidget {
 class _TestNotificationState extends State<TestNotification> {
   @override
   void initState() {
+    sendNotificationForeground();
     getToken();
     requestPermissionNotification();
     super.initState();
@@ -104,9 +106,15 @@ sendNotification(title, message) async {
     if (kDebugMode) {
       print(resBody);
     }
+    if (kDebugMode) {
+      print("Sueccessful notification send");
+    }
   } else {
     if (kDebugMode) {
       print(res.reasonPhrase);
+    }
+    if (kDebugMode) {
+      print("Failed notification send");
     }
   }
 }
