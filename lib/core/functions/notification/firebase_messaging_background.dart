@@ -6,5 +6,6 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     print("======= background message: ${message.messageId}");
     print('${message.notification!.title}');
     print('${message.notification!.body}');
+    print('${message.data}');
   }
 }

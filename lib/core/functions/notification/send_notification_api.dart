@@ -17,7 +17,11 @@ sendNotificationAPIRequest(title, message) async {
     "notification": {
       "title": title,
       "body": message,
-    }
+    },
+    "data": {
+      "id": "33",
+      "name": "Ali",
+    },
   };
 
   var req = http.Request('POST', url);

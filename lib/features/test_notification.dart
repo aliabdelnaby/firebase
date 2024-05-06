@@ -31,6 +31,7 @@ class _TestNotificationState extends State<TestNotification> {
                 'Message also contained a notification: ${message.notification}');
             print('====== ${message.notification!.title}');
             print('====== ${message.notification!.body}');
+            print('====== ${message.data}');
           }
           //! Add Custom Notification here like (Snackbar)
 
