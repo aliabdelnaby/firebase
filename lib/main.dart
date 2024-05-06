@@ -1,3 +1,5 @@
+import 'package:firebase_app/features/image_picker.dart';
+
 import 'core/functions/auth_check_state.dart';
 import 'features/auth/views/login.dart';
 import 'features/auth/views/sign_up.dart';
@@ -38,7 +40,7 @@ class MyApp extends StatelessWidget {
       home: FirebaseAuth.instance.currentUser == null
           ? const Login()
           : FirebaseAuth.instance.currentUser!.emailVerified == true
-              ? const HomePage()
+              ? const ImagePickerView()
               : const Login(),
       routes: {
         "signup": (context) => const SignUp(),
