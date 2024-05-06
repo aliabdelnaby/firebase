@@ -13,6 +13,7 @@ class TestNotification extends StatefulWidget {
 class _TestNotificationState extends State<TestNotification> {
   @override
   void initState() {
+    onMessageOpenedAppNotification();
     sendNotificationForeground();
     getToken();
     requestPermissionNotification();
@@ -80,6 +81,30 @@ class _TestNotificationState extends State<TestNotification> {
     if (kDebugMode) {
       print('User granted permission: ${settings.authorizationStatus}');
     }
+  }
+
+  void onMessageOpenedAppNotification() {
+    FirebaseMessaging.onMessageOpenedApp.listen(
+      (RemoteMessage message) {
+        if (message.data['type'] == 'home') {
+          Navigator.of(context).pushNamed("home");
+        }
+
+        if (kDebugMode) {
+          print('========onMessageOpenedApp: ${message.notification}');
+        }
+
+        if (kDebugMode) {
+          print('========onMessageOpenedApp: ${message.notification!.title}');
+        }
+        if (kDebugMode) {
+          print('========onMessageOpenedApp: ${message.notification!.body}');
+        }
+        if (kDebugMode) {
+          print('========onMessageOpenedApp: ${message.data}');
+        }
+      },
+    );
   }
 
   @override
