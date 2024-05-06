@@ -142,6 +142,7 @@ class _AddCategoryViewState extends State<AddNoteView> {
                     height: 200,
                     width: 200,
                   ),
+                if (url == null) const Text("No Image uploaded"),
                 const SizedBox(height: 10),
               ],
             ),

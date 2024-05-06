@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import 'add_note.dart';
@@ -152,6 +153,13 @@ class _HomePageState extends State<NoteView> {
                                       .collection('note')
                                       .doc(data[index].id)
                                       .delete();
+                                  if (data[index]["image"] != "none") {
+                                    FirebaseStorage.instance
+                                        .refFromURL(
+                                          data[index]["image"]!,
+                                        )
+                                        .delete();
+                                  }
                                 },
                                 icon: const Icon(
                                   Icons.delete_outline,
