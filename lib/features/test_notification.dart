@@ -1,3 +1,4 @@
+import 'package:firebase_app/const.dart';
 import 'package:firebase_app/core/functions/notification/send_notification_api.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -13,6 +14,7 @@ class TestNotification extends StatefulWidget {
 class _TestNotificationState extends State<TestNotification> {
   @override
   void initState() {
+    getInitialMessageNotification(context);
     onMessageOpenedAppNotification();
     sendNotificationForeground();
     getToken();
@@ -49,23 +51,16 @@ class _TestNotificationState extends State<TestNotification> {
     );
   }
 
-  getToken() async {
-    FirebaseMessaging.instance.getToken().then(
-      (value) {
-        if (kDebugMode) {
-          print(value);
-        }
-      },
-    ).catchError(
-      (e) {
-        if (kDebugMode) {
-          print(e);
-        }
-      },
-    );
+  void getToken() async {
+    String? myTokenMessaging = await FirebaseMessaging.instance.getToken();
+
+    if (kDebugMode) {
+      print(myTokenMessaging);
+    }
+    tokenMessaging = myTokenMessaging;
   }
 
-  requestPermissionNotification() async {
+  void requestPermissionNotification() async {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
 
     NotificationSettings settings = await messaging.requestPermission(
@@ -105,6 +100,31 @@ class _TestNotificationState extends State<TestNotification> {
         }
       },
     );
+  }
+
+  void getInitialMessageNotification(context) async {
+    RemoteMessage? initialMessage =
+        await FirebaseMessaging.instance.getInitialMessage();
+    if (initialMessage != null) {
+      if (initialMessage.data['type'] == 'home') {
+        Navigator.of(context).pushNamed("home");
+      }
+
+      if (kDebugMode) {
+        print('========onInitialMessage: ${initialMessage.notification}');
+      }
+
+      if (kDebugMode) {
+        print(
+            '========onInitialMessage: ${initialMessage.notification!.title}');
+      }
+      if (kDebugMode) {
+        print('========onInitialMessage: ${initialMessage.notification!.body}');
+      }
+      if (kDebugMode) {
+        print('========onInitialMessage: ${initialMessage.data}');
+      }
+    }
   }
 
   @override

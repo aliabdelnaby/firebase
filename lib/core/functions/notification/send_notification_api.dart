@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:firebase_app/const.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 
@@ -12,8 +13,7 @@ sendNotificationAPIRequest(title, message) async {
   var url = Uri.parse('https://fcm.googleapis.com/fcm/send');
 
   var body = {
-    "to":
-        "f469SCStRwKb_gCc3f78oZ:APA91bHyvsdvQbiS-go1ZuN06dwXsbQeo1y2Ky6s17DcwO5S2bZLmLY-4x6hlVp-rtwVc9AifJBraFVbIhXVv4MhKucvu2AK50U8f4onJYJb-qhgUpJxSl77qd3q5i2IXh_L4qRkqhIJ",
+    "to": "$tokenMessaging",
     "notification": {
       "title": title,
       "body": message,
