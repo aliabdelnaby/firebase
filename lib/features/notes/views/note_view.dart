@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'add_note.dart';
@@ -111,8 +113,13 @@ class _HomePageState extends State<NoteView> {
                           ),
                           const SizedBox(height: 10),
                           if (data[index]["image"] != "none")
-                            Image.network(
-                              data[index]["image"]!,
+                            CachedNetworkImage(
+                              imageUrl: data[index]["image"]!,
+                              placeholder: (context, url) =>
+                                  const CupertinoActivityIndicator(),
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.hide_image_rounded),
+                              fit: BoxFit.cover,
                               height: 100,
                             ),
                           Row(

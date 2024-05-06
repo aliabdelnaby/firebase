@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_app/features/notes/widgets/custom_add_image_button.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
@@ -136,8 +138,12 @@ class _AddCategoryViewState extends State<AddNoteView> {
                       ),
                 const SizedBox(height: 20),
                 if (url != null)
-                  Image.network(
-                    url!,
+                  CachedNetworkImage(
+                    imageUrl: url!,
+                    placeholder: (context, url) =>
+                        const CupertinoActivityIndicator(),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.hide_image_rounded),
                     fit: BoxFit.cover,
                     height: 200,
                     width: 200,

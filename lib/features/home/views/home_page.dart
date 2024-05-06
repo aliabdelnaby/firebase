@@ -1,9 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app/features/categories/views/update_category_view.dart';
 import 'package:firebase_app/features/notes/views/note_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -111,10 +113,19 @@ class _HomePageState extends State<HomePage> {
                       padding: const EdgeInsets.all(20),
                       child: Column(
                         children: [
-                          Image.network(
-                            "https://assets.dryicons.com/uploads/icon/preview/1139/large_1x_folder.png",
+                          CachedNetworkImage(
+                            imageUrl:
+                                "https://assets.dryicons.com/uploads/icon/preview/1139/large_1x_folder.png",
+                            placeholder: (context, url) =>
+                                const CupertinoActivityIndicator(),
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.hide_image_rounded),
                             height: 120,
                           ),
+                          // Image.network(
+                          //   "https://assets.dryicons.com/uploads/icon/preview/1139/large_1x_folder.png",
+                          //   height: 120,
+                          // ),
                           const SizedBox(height: 15),
                           Text(
                             data[index]["name"],
