@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
 
 class ImagePickerView extends StatefulWidget {
   const ImagePickerView({super.key});
@@ -11,13 +13,17 @@ class ImagePickerView extends StatefulWidget {
 
 class _ImagePickerViewState extends State<ImagePickerView> {
   File? file;
+  String? url;
   getImage() async {
     final ImagePicker picker = ImagePicker();
 
-    final XFile? image =
-        await picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await picker.pickImage(source: ImageSource.camera);
     if (image != null) {
       file = File(image.path);
+      var imageName = basename(image.path);
+      var refStorage = FirebaseStorage.instance.ref(imageName);
+      await refStorage.putFile(file!);
+      url = await refStorage.getDownloadURL();
     }
 
     setState(() {});
@@ -37,10 +43,10 @@ class _ImagePickerViewState extends State<ImagePickerView> {
             },
             child: const Text("Pick Image"),
           ),
-          if (file != null)
+          if (url != null)
             Center(
-              child: Image.file(
-                file!,
+              child: Image.network(
+                url!,
                 fit: BoxFit.cover,
                 height: 300,
                 width: 300,
