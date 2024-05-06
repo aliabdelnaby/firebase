@@ -21,7 +21,7 @@ class _ImagePickerViewState extends State<ImagePickerView> {
     if (image != null) {
       file = File(image.path);
       var imageName = basename(image.path);
-      var refStorage = FirebaseStorage.instance.ref(imageName);
+      var refStorage = FirebaseStorage.instance.ref("images").child(imageName);
       await refStorage.putFile(file!);
       url = await refStorage.getDownloadURL();
     }

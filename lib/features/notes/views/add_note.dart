@@ -1,3 +1,10 @@
+import 'dart:io';
+
+import 'package:firebase_app/features/notes/widgets/custom_add_image_button.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
+
 import '../../categories/widgets/custom_add_text_field.dart';
 import '../../categories/widgets/custom_button_category.dart';
 import 'note_view.dart';
@@ -16,13 +23,10 @@ class _AddCategoryViewState extends State<AddNoteView> {
   TextEditingController note = TextEditingController();
   GlobalKey<FormState> categoryNoteformKey = GlobalKey<FormState>();
   bool isLoading = false;
-  @override
-  void dispose() {
-    note.dispose();
-    super.dispose();
-  }
+  File? file;
+  String? url;
 
-  Future<void> addNote() async {
+  Future<void> addNote(context) async {
     CollectionReference collectionNote = FirebaseFirestore.instance
         .collection('categories')
         .doc(widget.docId)
@@ -31,6 +35,7 @@ class _AddCategoryViewState extends State<AddNoteView> {
     return collectionNote.add(
       {
         'note': note.text,
+        'image': url ?? 'none',
       },
     ).then(
       (value) {
@@ -62,6 +67,27 @@ class _AddCategoryViewState extends State<AddNoteView> {
     );
   }
 
+  getImage() async {
+    final ImagePicker picker = ImagePicker();
+
+    final XFile? image = await picker.pickImage(source: ImageSource.camera);
+    if (image != null) {
+      file = File(image.path);
+      var imageName = basename(image.path);
+      var refStorage = FirebaseStorage.instance.ref("images").child(imageName);
+      await refStorage.putFile(file!);
+      url = await refStorage.getDownloadURL();
+    }
+
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    note.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,35 +96,55 @@ class _AddCategoryViewState extends State<AddNoteView> {
       ),
       body: Form(
         key: categoryNoteformKey,
-        child: Column(
+        child: ListView(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-              child: CategortyTextFormField(
-                hinttext: "Enter your note",
-                mycontroller: note,
-              ),
-            ),
-            const SizedBox(height: 10),
-            isLoading
-                ? const CircularProgressIndicator(
-                    color: Colors.orange,
-                  )
-                : AddCategoryButton(
-                    onPressed: () async {
-                      if (categoryNoteformKey.currentState!.validate()) {
-                        setState(() {
-                          isLoading = true;
-                        });
-                        await addNote();
-                        setState(() {
-                          isLoading = false;
-                        });
-                      }
-                    },
-                    title: "Add",
+            Column(
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                  child: CategortyTextFormField(
+                    hinttext: "Enter your note",
+                    mycontroller: note,
                   ),
-            const SizedBox(height: 10),
+                ),
+                const SizedBox(height: 10),
+                UploadImageButton(
+                  onPressed: () async {
+                    await getImage();
+                  },
+                  title: "Upload Image",
+                  isSelected: url == null ? false : true,
+                ),
+                isLoading
+                    ? const CircularProgressIndicator(
+                        color: Colors.orange,
+                      )
+                    : AddCategoryButton(
+                        onPressed: () async {
+                          if (categoryNoteformKey.currentState!.validate()) {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            await addNote(context);
+                            setState(() {
+                              isLoading = false;
+                            });
+                          }
+                        },
+                        title: "Add Note",
+                      ),
+                const SizedBox(height: 20),
+                if (url != null)
+                  Image.network(
+                    url!,
+                    fit: BoxFit.cover,
+                    height: 200,
+                    width: 200,
+                  ),
+                const SizedBox(height: 10),
+              ],
+            ),
           ],
         ),
       ),

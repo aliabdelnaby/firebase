@@ -91,7 +91,7 @@ class _HomePageState extends State<NoteView> {
             : GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  mainAxisExtent: 165,
+                  mainAxisExtent: 235,
                   crossAxisSpacing: 5,
                   mainAxisSpacing: 5,
                 ),
@@ -108,6 +108,12 @@ class _HomePageState extends State<NoteView> {
                             overflow: TextOverflow.ellipsis,
                             maxLines: 3,
                           ),
+                          const SizedBox(height: 10),
+                          if (data[index]["image"] != "none")
+                            Image.network(
+                              data[index]["image"]!,
+                              height: 100,
+                            ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
