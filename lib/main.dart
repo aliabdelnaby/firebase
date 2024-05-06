@@ -1,5 +1,7 @@
+import 'package:firebase_app/core/functions/notification/firebase_messaging_background.dart';
 import 'package:firebase_app/features/test_notification.dart';
-import 'core/functions/auth_check_state.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'core/functions/firebase/auth_check_state.dart';
 import 'features/auth/views/login.dart';
 import 'features/auth/views/sign_up.dart';
 import 'core/firebase_options/firebase_options.dart';
@@ -9,11 +11,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   checkStateChanges();
   runApp(const MyApp());
 }

@@ -1,4 +1,4 @@
-import 'package:firebase_app/core/functions/send_notification_api.dart';
+import 'package:firebase_app/core/functions/notification/send_notification_api.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +24,7 @@ class _TestNotificationState extends State<TestNotification> {
       (RemoteMessage message) {
         if (message.notification != null) {
           if (kDebugMode) {
-            print('Got a message whilst in the foreground!');
+            print('====== Got a message whilst in the foreground!');
           }
           if (kDebugMode) {
             print(
