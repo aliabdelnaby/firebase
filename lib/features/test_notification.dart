@@ -13,6 +13,7 @@ class _TestNotificationState extends State<TestNotification> {
   @override
   void initState() {
     getToken();
+    requestPermissionNotification();
     super.initState();
   }
 
@@ -30,6 +31,24 @@ class _TestNotificationState extends State<TestNotification> {
         }
       },
     );
+  }
+
+  requestPermissionNotification() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    if (kDebugMode) {
+      print('User granted permission: ${settings.authorizationStatus}');
+    }
   }
 
   @override
