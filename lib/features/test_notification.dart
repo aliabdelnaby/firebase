@@ -1,5 +1,6 @@
 import 'package:firebase_app/const.dart';
 import 'package:firebase_app/core/functions/notification/send_notification_api.dart';
+import 'package:firebase_app/features/home/views/home_page.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -82,7 +83,11 @@ class _TestNotificationState extends State<TestNotification> {
     FirebaseMessaging.onMessageOpenedApp.listen(
       (RemoteMessage message) {
         if (message.data['type'] == 'home') {
-          Navigator.of(context).pushNamed("home");
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const HomePage(),
+            ),
+          );
         }
 
         if (kDebugMode) {
@@ -107,7 +112,11 @@ class _TestNotificationState extends State<TestNotification> {
         await FirebaseMessaging.instance.getInitialMessage();
     if (initialMessage != null) {
       if (initialMessage.data['type'] == 'home') {
-        Navigator.of(context).pushNamed("home");
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const HomePage(),
+          ),
+        );
       }
 
       if (kDebugMode) {
@@ -139,6 +148,14 @@ class _TestNotificationState extends State<TestNotification> {
           children: [
             TextButton.icon(
               onPressed: () async {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      "You are subscribed to notifications",
+                    ),
+                    backgroundColor: Colors.green,
+                  ),
+                );
                 await FirebaseMessaging.instance.subscribeToTopic('ali');
               },
               icon: const Icon(
@@ -154,6 +171,14 @@ class _TestNotificationState extends State<TestNotification> {
             ),
             TextButton.icon(
               onPressed: () async {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      "You have unsubscribed from notifications",
+                    ),
+                    backgroundColor: Colors.red,
+                  ),
+                );
                 await FirebaseMessaging.instance.unsubscribeFromTopic('ali');
               },
               icon: const Icon(Icons.send),

@@ -1,5 +1,4 @@
 import 'package:firebase_app/core/functions/notification/firebase_messaging_background.dart';
-import 'package:firebase_app/features/test_notification.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'core/functions/firebase/auth_check_state.dart';
 import 'features/auth/views/login.dart';
@@ -20,8 +19,6 @@ Future<void> main() async {
   checkStateChanges();
   runApp(const MyApp());
 }
-
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -44,7 +41,7 @@ class MyApp extends StatelessWidget {
       home: FirebaseAuth.instance.currentUser == null
           ? const Login()
           : FirebaseAuth.instance.currentUser!.emailVerified == true
-              ? const TestNotification()
+              ? const HomePage()
               : const Login(),
       routes: {
         "signup": (context) => const SignUp(),

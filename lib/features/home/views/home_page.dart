@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app/features/categories/views/update_category_view.dart';
 import 'package:firebase_app/features/notes/views/note_view.dart';
+import 'package:firebase_app/features/test_notification.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -56,6 +57,18 @@ class _HomePageState extends State<HomePage> {
       ),
       appBar: AppBar(
         title: const Text('Firebase App'),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) {
+                  return const TestNotification();
+                },
+              ),
+            );
+          },
+          icon: const Icon(Icons.notifications_active_outlined),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -122,10 +135,6 @@ class _HomePageState extends State<HomePage> {
                                 const Icon(Icons.hide_image_rounded),
                             height: 120,
                           ),
-                          // Image.network(
-                          //   "https://assets.dryicons.com/uploads/icon/preview/1139/large_1x_folder.png",
-                          //   height: 120,
-                          // ),
                           const SizedBox(height: 15),
                           Text(
                             data[index]["name"],

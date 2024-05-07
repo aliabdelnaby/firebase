@@ -3,6 +3,7 @@ import 'package:firebase_app/const.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 
+ //! Send Notification API
 sendNotificationAPIRequest(title, message) async {
   var headersList = {
     'Accept': '*/*',
@@ -48,7 +49,7 @@ sendNotificationAPIRequest(title, message) async {
   }
 }
 
-//!
+//! send notification to topic
 
 sendNotificationAPIRequestTopic(title, message, topic) async {
   var headersList = {
