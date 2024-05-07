@@ -133,15 +133,52 @@ class _TestNotificationState extends State<TestNotification> {
       appBar: AppBar(
         title: const Text("Notification"),
       ),
-      body: Container(
-        alignment: Alignment.topCenter,
-        padding: const EdgeInsets.symmetric(vertical: 200),
-        child: TextButton.icon(
-          onPressed: () async {
-            await sendNotificationAPIRequest("Test", "done!!!!");
-          },
-          icon: const Icon(Icons.send),
-          label: const Text("Send Notification"),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextButton.icon(
+              onPressed: () async {
+                await FirebaseMessaging.instance.subscribeToTopic('ali');
+              },
+              icon: const Icon(
+                Icons.send,
+                color: Colors.orange,
+              ),
+              label: const Text(
+                "subscribe",
+                style: TextStyle(
+                  color: Colors.orange,
+                ),
+              ),
+            ),
+            TextButton.icon(
+              onPressed: () async {
+                await FirebaseMessaging.instance.unsubscribeFromTopic('ali');
+              },
+              icon: const Icon(Icons.send),
+              label: const Text("unsubscribe"),
+            ),
+            TextButton.icon(
+              onPressed: () async {
+                await sendNotificationAPIRequestTopic(
+                  "Test",
+                  "done!!!!",
+                  "ali",
+                );
+              },
+              icon: const Icon(
+                Icons.send,
+                color: Colors.red,
+              ),
+              label: const Text(
+                "Send Notification Topic",
+                style: TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
